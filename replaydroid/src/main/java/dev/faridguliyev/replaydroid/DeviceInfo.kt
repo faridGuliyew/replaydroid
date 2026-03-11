@@ -12,6 +12,8 @@ data class DeviceInfo(
     val device: String,
     val board: String,
     val hardware: String,
+    val cpuCores: Int,
+    val cpuArch: String,
 
     // Software details
     val osVersion: String,
@@ -27,6 +29,10 @@ data class DeviceInfo(
     val totalMemoryMb: Long,
     val availableMemoryMb: Long,
     val isLowRamDevice: Boolean,
+    val language: String,
+    val locale: String,
+    val totalInternalStorageGb: Double,
+    val availableInternalStorageGb: Double,
 
     val batteryLevel: Int,
     val isCharging: Boolean

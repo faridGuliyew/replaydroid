@@ -6,8 +6,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.BatteryManager
 import android.os.Build
+import android.os.Environment
+import android.os.StatFs
+import android.view.WindowManager
 import dev.faridguliyev.replaydroid.DeviceInfo
 
 fun Context.fetchDeviceInfo(): DeviceInfo? {
@@ -16,6 +20,17 @@ fun Context.fetchDeviceInfo(): DeviceInfo? {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val memoryInfo = ActivityManager.MemoryInfo()
         activityManager.getMemoryInfo(memoryInfo)
+
+        // CPU Info
+        val cpuCores = Runtime.getRuntime().availableProcessors()
+
+        // Locale / Language
+        val locale = resources.configuration.locales[0]
+
+        // Disk Storage (Internal)
+        val stat = StatFs(Environment.getDataDirectory().path)
+        val totalBytes = stat.blockCountLong * stat.blockSizeLong
+        val availableBytes = stat.availableBlocksLong * stat.blockSizeLong
 
         // Display info
         val displayMetrics = resources.displayMetrics
@@ -40,6 +55,7 @@ fun Context.fetchDeviceInfo(): DeviceInfo? {
         val isCharging =
             status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
 
+
         return DeviceInfo(
             packageName = packageName,
             appVersionName = packageInfo.versionName ?: "unknown",
@@ -50,6 +66,8 @@ fun Context.fetchDeviceInfo(): DeviceInfo? {
             device = Build.DEVICE,
             board = Build.BOARD,
             hardware = Build.HARDWARE,
+            cpuArch =  Build.SUPPORTED_ABIS.joinToString(","),
+            cpuCores = cpuCores,
 
             osVersion = Build.VERSION.RELEASE,
             sdkInt = Build.VERSION.SDK_INT,
@@ -62,9 +80,13 @@ fun Context.fetchDeviceInfo(): DeviceInfo? {
             totalMemoryMb = memoryInfo.totalMem / (1024 * 1024),
             availableMemoryMb = memoryInfo.availMem / (1024 * 1024),
             isLowRamDevice = activityManager.isLowRamDevice,
+            language = locale.language,
+            locale = locale.toString(),
+            totalInternalStorageGb = totalBytes.toDouble() / (1024 * 1024 * 1024),
+            availableInternalStorageGb = availableBytes.toDouble() / (1024 * 1024 * 1024),
 
             batteryLevel = batteryPct,
-            isCharging = isCharging
+            isCharging = isCharging,
         )
     }.getOrNull()
 }
