@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    id("maven-publish")
 }
 
 android {
@@ -8,6 +9,10 @@ android {
         version = release(36) {
             minorApiLevel = 1
         }
+    }
+
+    publishing {
+        singleVariant("release")
     }
 
     defaultConfig {
