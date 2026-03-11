@@ -1,5 +1,5 @@
 package dev.faridguliyev.replaydroid
 
 interface DiagnosticsTransport {
-    fun sendDiagnostics(result: DiagnosticsResult)
+    suspend fun sendDiagnostics(result: DiagnosticsResult) : Boolean
 }

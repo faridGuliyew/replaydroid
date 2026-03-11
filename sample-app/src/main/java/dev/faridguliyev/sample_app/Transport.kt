@@ -23,8 +23,8 @@ val client = HttpClient {
 }
 
 val transport = object : DiagnosticsTransport {
-    override fun sendDiagnostics(result: DiagnosticsResult) {
-        CoroutineScope(Dispatchers.IO).launch {
+    override suspend fun sendDiagnostics(result: DiagnosticsResult): Boolean {
+//        CoroutineScope(Dispatchers.IO).launch {
             val dto = result.toDTO()
             val partialDto = DiagnosticsPartialResultDTO(
                 deviceInfo = dto.deviceInfo,
@@ -47,6 +47,7 @@ val transport = object : DiagnosticsTransport {
                     }
                 }
             )
-        }
+        return true
+//        }
     }
 }
