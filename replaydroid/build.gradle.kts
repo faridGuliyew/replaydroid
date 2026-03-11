@@ -37,6 +37,20 @@ android {
     }
 }
 
+afterEvaluate {
+    configure<PublishingExtension> {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+
+                groupId = "com.github.faridGuliyew"
+                artifactId = "replaydroid"
+                version = "1.0.0-DEV"
+            }
+        }
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
