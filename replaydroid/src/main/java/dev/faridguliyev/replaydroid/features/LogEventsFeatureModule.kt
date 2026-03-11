@@ -4,19 +4,26 @@ import android.app.Activity
 import androidx.lifecycle.Lifecycle
 import dev.faridguliyev.replaydroid.DiagnosticEvent
 import dev.faridguliyev.replaydroid.DiagnosticEventType
-import dev.faridguliyev.replaydroid.utils.getActivityInfo
 
 class LogEventsFeatureModule (
     val debugger: DebugFeatureModule? = null,
-    val onEventReady: (event: DiagnosticEvent) -> Unit
+    val onEventReady: (event: DiagnosticEvent) -> Unit,
+    val onAppCrash: () -> Unit
 ) {
-    fun addEvent(
-        type: DiagnosticEventType,
-        activity: Activity
-    ) {
+    init {
+        registerGlobalExceptionHandler()
+    }
+    fun registerGlobalExceptionHandler() {
+        val currentExceptionListener : Thread.UncaughtExceptionHandler? = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            addEvent(type = DiagnosticEventType.AppCrash(throwable = throwable))
+            onAppCrash()
+            currentExceptionListener?.uncaughtException(thread, throwable)
+        }
+    }
+    fun addEvent(type: DiagnosticEventType) {
         val event = DiagnosticEvent(
             type = type::class.simpleName.orEmpty(),
-            activityInfo = activity.getActivityInfo(),
             timestamp = System.currentTimeMillis(),
             params = type.getParams()
         )
@@ -28,8 +35,10 @@ class LogEventsFeatureModule (
         lifecycleEvent: Lifecycle.Event
     ) {
         addEvent(
-            type = DiagnosticEventType.ActivityLifecycle(lifecycleEvent = lifecycleEvent.name),
-            activity = activity
+            type = DiagnosticEventType.ActivityLifecycle(
+                activity = activity,
+                lifecycleEvent = lifecycleEvent.name
+            )
         )
     }
 }

@@ -17,6 +17,7 @@ import dev.faridguliyev.replaydroid.utils.getActivityInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.runBlocking
 
 /** @param application - Used for registering activity lifecycle callbacks & thus get currently active activity
  * @param frameRegistry - Stores captured frames
@@ -54,7 +55,8 @@ class Diagnostics(val config: Config) {
 
     val logEventsFeatureModule = LogEventsFeatureModule(
         debugger = debugger,
-        onEventReady = eventRegistry::addEvent
+        onEventReady = eventRegistry::addEvent,
+        onAppCrash = { runBlocking { sendDiagnostics() } }
     ).takeIf { Feature.LOG_EVENTS in config.enabledFeatures }
 
     private val windowCallbackRegisteredActivities: MutableSet<ActivityInfo> = mutableSetOf()
@@ -149,13 +151,16 @@ class Diagnostics(val config: Config) {
         )
     }
 
-    fun sendDiagnostics(extras: Map<String, String> = mapOf()) {
-        transport?.sendDiagnostics(result = getResult(extras))
+    suspend fun sendDiagnostics(extras: Map<String, String> = mapOf()) {
+        val result = getResult(extras)
+        val t = transport
 
-        if (transport == null) {
+        if (t == null) {
             debugger?.logError("sendDiagnostics() failed. Transport is not configured.")
         } else {
-            debugger?.log("Diagnostics sent over $transport")
+            debugger?.log("Diagnostics result: $result is being sent over ${t::class.simpleName} transport.")
+            val isSuccess = t.sendDiagnostics(result = result)
+            debugger?.log("sendDiagnostics() isSuccess: $isSuccess")
         }
     }
 }
