@@ -4,7 +4,6 @@ import android.app.Application
 import dev.faridguliyev.replaydroid.Diagnostics
 import dev.faridguliyev.replaydroid.dsl.DiagnosticsFeature
 import dev.faridguliyev.replaydroid.dsl.build
-import io.ktor.utils.io.InternalAPI
 
 val diagnostics by lazy {
     Diagnostics.build {
@@ -15,7 +14,6 @@ val diagnostics by lazy {
 }
 
 class App : Application() {
-    @OptIn(InternalAPI::class)
     override fun onCreate() {
         super.onCreate()
 
