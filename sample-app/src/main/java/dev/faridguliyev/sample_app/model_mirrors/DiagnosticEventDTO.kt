@@ -12,7 +12,6 @@ import kotlinx.serialization.Serializable
 data class DiagnosticEventDTO(
     val type: String,
     val timestamp: Long,
-    val activityInfo: ActivityInfoDTO, // Mirror of ActivityInfo
     val params: Map<String, String>
 )
 
@@ -25,7 +24,6 @@ data class ActivityInfoDTO(
 fun DiagnosticEvent.toDTO() = DiagnosticEventDTO(
     type = this.type,
     timestamp = this.timestamp,
-    activityInfo = ActivityInfoDTO(this.activityInfo.className),
     params = this.params
 )
 
