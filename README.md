@@ -1,17 +1,25 @@
 ReplayDroid 📹🛡️
+
 ReplayDroid is a lightweight, non-intrusive Android library designed for deep application diagnostics. It helps developers and QA teams understand exactly what happened leading up to a bug by capturing visual frames, monitoring Activity lifecycles, and logging system events in a "flight recorder" fashion.
 
 Key Features:
+
 🖼️ Frame Capture: Captures snapshots of the app's UI to reconstruct user actions - IDLE frames are skipped.
+
 🔄 Lifecycle Tracking: Automatically logs Activity lifecycle transitions.
+
 🚀 Performance-First: Designed to run in the background with minimal overhead on the main thread.
+
 Upcoming Features:
+
 📝 Event Logging: Capturing intent data, and system broadcasts.
 
 # Installation
+
 ReplayDroid is hosted on JitPack. Follow these steps to include it in your project:
 
 1. Add the JitPack repository
+
 Add it to your root build.gradle.kts (or settings.gradle.kts for newer projects):
 ```kotlin
 dependencyResolutionManagement {
