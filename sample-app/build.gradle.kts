@@ -45,7 +45,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(project(":replaydroid"))
-    implementation("com.github.faridGuliyew:replaydroid:100bfde73b")
 }
 
 val ktor_version = "3.4.1"
