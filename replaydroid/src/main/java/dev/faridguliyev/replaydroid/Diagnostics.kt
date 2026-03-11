@@ -137,19 +137,20 @@ class Diagnostics(val config: Config) {
         )
     }
 
-    fun getResult(): DiagnosticsResult {
+    fun getResult(extras: Map<String, String> = mapOf()): DiagnosticsResult {
         val (frames, timestamps) = frameRegistry.getFramesAndTimestamps()
 
         return DiagnosticsResult(
             deviceInfo = application.fetchDeviceInfo(),
             frames = frames,
             frameTimestamps = timestamps,
-            events = eventRegistry.getEvents()
+            events = eventRegistry.getEvents(),
+            extras = extras
         )
     }
 
-    fun sendDiagnostics() {
-        transport?.sendDiagnostics(getResult())
+    fun sendDiagnostics(extras: Map<String, String> = mapOf()) {
+        transport?.sendDiagnostics(result = getResult(extras))
 
         if (transport == null) {
             debugger?.logError("sendDiagnostics() failed. Transport is not configured.")
